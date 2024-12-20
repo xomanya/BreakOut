@@ -7,7 +7,8 @@ public class Ball : MonoBehaviour
         [SerializeField] private float _speed;
         [SerializeField] private AudioClip _getCubeClip;
         [SerializeField] private AudioClip _collideBorderClip;
-        [SerializeField] private AudioClip _deathClip;
+        //[SerializeField] private AudioClip _deathClip;
+        [SerializeField] private Rigidbody _rigidbody;
         
         private Vector3 direction = new Vector3(0.5f, 0.5f, 0);
         private int _count = 0;
@@ -24,11 +25,19 @@ public class Ball : MonoBehaviour
                 if (Input.GetKeyDown(KeyCode.Space) && _isActive == false)
                 {
                         _isActive = true;
-                }
-
-                if (_isActive == true)
-                {
-                        transform.Translate(direction * _speed * Time.deltaTime);
+                        transform.SetParent(null);
+                        _rigidbody.velocity = direction * _speed;
+                
+                        // transform.Translate(direction * _speed * Time.deltaTime);
+                        if (Mathf.Abs(direction.x) > 0.9f || Mathf.Abs(direction.x) < 0.1f)
+                        {
+                                direction.x = 0.5f;
+                        }
+                        if (Mathf.Abs(direction.y) > 0.9f || Mathf.Abs(direction.y) < 0.1f)
+                        {
+                                direction.y = 0.5f;
+                        }
+                        
                 }
         }
 
@@ -47,24 +56,20 @@ public class Ball : MonoBehaviour
                 else if (other.gameObject.CompareTag("BorderGameOver"))
                 {
                         _isActive = false;
-                        _audioSource.PlayOneShot(_deathClip);
+                        //_audioSource.PlayOneShot(_deathClip);
                         SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
                 }
-        }
-
-        private void OnTriggerEnter(Collider other)
-        {
-                if (other.CompareTag("GetCube"))
+                if (other.collider.CompareTag("GetCube"))
                 {
                         other.gameObject.SetActive(false);
                         _audioSource.PlayOneShot(_getCubeClip);
                         direction.x = -direction.x; 
                         _count++;
-                }
-
-                if (_count >= 45)
-                {
-                        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+                        if (_count >= 45)
+                        {
+                                SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+                        }
+                        
                 }
         }
 }

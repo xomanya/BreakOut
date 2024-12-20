@@ -3,8 +3,8 @@ using UnityEngine;
 public class PlayerController : MonoBehaviour
 {
     [SerializeField] private float _speed = 15.0f;
-    private float _left = -6.0f;
-    private float _right = 6.0f;
+    [SerializeField] private float _left = -6.0f;
+    [SerializeField] private float _right = 6.0f;
 
     private void Update()
     {
